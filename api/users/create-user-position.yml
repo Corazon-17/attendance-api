@@ -1,0 +1,21 @@
+info:
+  name: create-user-position
+  type: http
+  seq: 6
+
+http:
+  method: POST
+  url: "{{api-gateway-base-url}}/users/positions"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Marketing"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

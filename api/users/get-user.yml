@@ -1,0 +1,15 @@
+info:
+  name: get-user
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{api-gateway-base-url}}/users/019c9de6-c9be-751a-bdfc-e0c292f825f5"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

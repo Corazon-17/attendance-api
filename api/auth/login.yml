@@ -1,0 +1,22 @@
+info:
+  name: login
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{api-gateway-base-url}}/auth/login"
+  body:
+    type: json
+    data: |-
+      {
+        "email": "desmond@gmail.com",
+        "password": "00000000"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

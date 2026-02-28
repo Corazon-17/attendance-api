@@ -1,0 +1,26 @@
+info:
+  name: create-user
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{api-gateway-base-url}}/users"
+  body:
+    type: json
+    data: |-
+      {
+        "email": "sarto@gmail.com",
+        "name": "Sarto Lemoy",
+        "password": "12345678",
+        "phone": "082651256125",
+        "photo": null,
+        "positionId": "efe05109-96cb-4f98-a778-ffb830744ab8"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

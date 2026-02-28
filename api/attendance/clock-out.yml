@@ -1,0 +1,21 @@
+info:
+  name: clock-out
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{api-gateway-base-url}}/attendance/clock-out"
+  body:
+    type: json
+    data: |-
+      {
+        "userId": "019c9de6-c9be-751a-bdfc-e0c292f825f5"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

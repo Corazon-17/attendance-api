@@ -1,0 +1,23 @@
+info:
+  name: edit-user
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: "{{api-gateway-base-url}}/users/019c9dd4-268d-71c9-b201-8a08dfd6280a"
+  body:
+    type: json
+    data: |-
+      {
+        "password": "00000000",
+        "phone": "08112233444",
+        "photo": null
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

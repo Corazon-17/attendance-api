@@ -1,0 +1,3 @@
+CREATE DATABASE user_db;
+CREATE DATABASE attendance_db;
+CREATE DATABASE audit_db;
