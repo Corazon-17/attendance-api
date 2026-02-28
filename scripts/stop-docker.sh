@@ -1,4 +1,5 @@
 #!/bin/bash
+
 echo "Shutting down services..."
 docker compose down || exit 1
 echo "All services stopped."

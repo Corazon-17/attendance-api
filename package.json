@@ -9,6 +9,7 @@
     "build": "nest build",
     "start:docker": "./scripts/start-docker.sh",
     "stop:docker": "./scripts/stop-docker.sh",
+    "setup:prisma": "./scripts/setup-prisma.sh",
     "dev": "./scripts/start-services.sh",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
