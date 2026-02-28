@@ -5,4 +5,4 @@ variables:
   - name: api-gateway-base-url
     value: http://localhost:3000
   - name: access-token
-    value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjAxOWM5ZGQ0LTI2OGQtNzFjOS1iMjAxLThhMDhkZmQ2MjgwYSIsIm5hbWUiOiJEZXNtb25kIE11Y2hpY2hpbyIsInBvc2l0aW9uIjoiSVQiLCJpYXQiOjE3NzIyOTEzNDksImV4cCI6MTc3MzE5MTM0OX0.9IfN7M_KvpYRTvrqqPsxSfvbhVx5c6MUsciNnrmo5AY
+    value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJhYTM2ZDA0LWVmOGUtNDBlOS1hNzgyLTYyNTQ2YmI3NzQ1MiIsIm5hbWUiOiJBZG1pbiBIUkQiLCJwb3NpdGlvbiI6IkhSRCIsImlhdCI6MTc3MjMwNTQyNSwiZXhwIjoxNzcyMzA2MzI1fQ.1-9HjU6W_QwGAU7iprNKvAd9WxzJrJWjDCIOOpJLykY
