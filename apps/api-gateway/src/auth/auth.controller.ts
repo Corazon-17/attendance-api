@@ -32,6 +32,13 @@ export class AuthController {
       this.authClient.send({ cmd: 'login' }, dto),
     );
 
+    res.cookie('accessToken', jwt.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== 'development',
+      sameSite: 'lax',
+      maxAge: Number(process.env.ACCESS_TOKEN_TTL_SEC) * 1000,
+    });
+
     res.cookie('refreshToken', jwt.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
@@ -47,7 +54,10 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @Public()
-  async refresh(@Req() req: Request) {
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const refreshToken = req.cookies['refreshToken'];
 
     if (!refreshToken) {
@@ -56,9 +66,18 @@ export class AuthController {
         message: 'No refresh token',
       });
     }
-    return firstValueFrom(
+    const data = await firstValueFrom(
       this.authClient.send({ cmd: 'refresh-token' }, refreshToken),
     );
+
+    res.cookie('accessToken', data.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== 'development',
+      sameSite: 'lax',
+      maxAge: Number(process.env.ACCESS_TOKEN_TTL_SEC) * 1000,
+    });
+
+    return data;
   }
 
   @Post('logout')
@@ -71,9 +90,9 @@ export class AuthController {
     return { message: 'Logged out successfully' };
   }
 
-  @Get('/me')
+  @Get('me')
   me(@Req() req) {
-    const user = req.user.id;
-    return firstValueFrom(this.authClient.send({ cmd: 'me' }, user?.id));
+    const userId = req.user.id;
+    return firstValueFrom(this.authClient.send({ cmd: 'me' }, userId));
   }
 }

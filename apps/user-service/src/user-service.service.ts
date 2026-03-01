@@ -16,6 +16,8 @@ export class UsersService {
     private prisma: PrismaService,
     private password: PasswordService,
     @Inject('AUDIT_SERVICE') private readonly auditClient: ClientProxy,
+    @Inject('NOTIFICATION_SERVICE')
+    private readonly notificationClient: ClientProxy,
   ) {}
 
   private buildChanges(
@@ -111,12 +113,18 @@ export class UsersService {
 
     if (Object.keys(changes).length > 0) {
       const uuidv7 = v7();
-      this.auditClient.emit('user.updated', {
+      this.auditClient.emit('user.updated.log', {
         id: uuidv7,
         entity: 'user',
         entityId: data.id,
         action: 'UPDATE',
         actorId: data.actorId,
+        changes: changes,
+      });
+
+      this.notificationClient.emit('user.updated.notify', {
+        id: data.id,
+        message: current.name + ' profile was updated',
         changes: changes,
       });
     }
@@ -175,13 +183,18 @@ export class UsersService {
     });
 
     const uuidv7 = v7();
-    this.auditClient.emit('user.updated', {
+    this.auditClient.emit('user.updated.log', {
       id: uuidv7,
       entity: 'user',
       entityId: data.id,
       action: 'UPDATE-PASSWORD',
       actorId: data.id,
       changes: {},
+    });
+
+    this.notificationClient.emit('user.updated.notify', {
+      userId: data.id,
+      message: user.name + ' password was updated',
     });
 
     return updated;

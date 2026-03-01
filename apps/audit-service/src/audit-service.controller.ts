@@ -7,7 +7,7 @@ import { AuditServiceService } from './audit-service.service';
 export class AuditServiceController {
   constructor(private readonly auditService: AuditServiceService) {}
 
-  @EventPattern('user.updated')
+  @EventPattern('user.updated.log')
   async handleUserUpdated(@Payload() data: AuditLog) {
     return this.auditService.createLog(data);
   }

@@ -16,7 +16,7 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.enableCors({
-    origin: process.env.CORS_ORIGIN, // Frontend URL
+    origin: process.env.CORS_ORIGIN,
     credentials: true,
   });
 

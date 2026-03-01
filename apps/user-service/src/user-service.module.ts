@@ -27,6 +27,17 @@ const amqpUrl = `amqp://${process.env.HOST}:${process.env.AMQP_PORT}`;
           },
         },
       },
+      {
+        name: 'NOTIFICATION_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [amqpUrl],
+          queue: 'notification_queue',
+          queueOptions: {
+            durable: true,
+          },
+        },
+      },
     ]),
   ],
   controllers: [UserServiceController],
