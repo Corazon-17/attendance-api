@@ -54,8 +54,8 @@ export class AuthServiceService {
     );
 
     return {
-      access_token: accessToken,
-      refresh_token: refreshToken,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     };
   }
 
@@ -80,7 +80,7 @@ export class AuthServiceService {
       });
 
       return {
-        access_token: newAccessToken,
+        accessToken: newAccessToken,
       };
     } catch (err) {
       throw new RpcException({
@@ -92,5 +92,9 @@ export class AuthServiceService {
 
   async logout(userId: string) {
     await this.redisService.del(`refresh:${userId}`);
+  }
+
+  me(userId: string) {
+    return firstValueFrom(this.usersClient.send({ cmd: 'get-user' }, userId));
   }
 }

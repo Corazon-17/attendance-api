@@ -1,6 +1,10 @@
 import { CreateUserPositionDto } from '@app/shared/users/dto/user-position.dto';
-import { CreateUserDto, UpdateUserDto } from '@app/shared/users/dto/user.dto';
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  ChangePasswordDto,
+  CreateUserDto,
+  UpdateUserDto,
+} from '@app/shared/users/dto/user.dto';
+import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { PasswordService } from 'libs/security/password.service';
 import { v7 } from 'uuid';
@@ -88,9 +92,7 @@ export class UsersService {
       });
     }
 
-    const hashedPassword = await this.password.hash(data.password);
     const updateData = {
-      password: hashedPassword,
       phone: data.phone,
       photo: data.photo,
     };
@@ -100,6 +102,9 @@ export class UsersService {
         id: data.id,
       },
       data: updateData,
+      omit: {
+        password: true,
+      },
     });
 
     const changes = this.buildChanges(current, updateData);
@@ -119,6 +124,69 @@ export class UsersService {
     return updated;
   }
 
+  async changePassword(data: { id: string } & ChangePasswordDto) {
+    const isPasswordChange = data.currentPassword !== data.newPassword;
+    if (!isPasswordChange) {
+      throw new RpcException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'New password cannot be the same as the current password',
+      });
+    }
+
+    const isNewPasswordValid = data.newPassword === data.newPassword2;
+    if (!isNewPasswordValid) {
+      throw new RpcException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: "New password doesn't match",
+      });
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: data.id },
+    });
+    if (!user) {
+      throw new RpcException({
+        statusCode: 404,
+        message: 'User not found',
+      });
+    }
+
+    const isPasswordValid = await this.password.compare(
+      data.currentPassword,
+      user.password,
+    );
+    if (!isPasswordValid) {
+      throw new RpcException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Current password invalid',
+      });
+    }
+
+    const hashedPassword = await this.password.hash(data.newPassword);
+
+    const updated = await this.prisma.user.update({
+      where: {
+        id: data.id,
+      },
+      data: { password: hashedPassword },
+      omit: {
+        password: true,
+      },
+    });
+
+    const uuidv7 = v7();
+    this.auditClient.emit('user.updated', {
+      id: uuidv7,
+      entity: 'user',
+      entityId: data.id,
+      action: 'UPDATE-PASSWORD',
+      actorId: data.id,
+      changes: {},
+    });
+
+    return updated;
+  }
+
   getUser(id: string) {
     return this.prisma.user.findUnique({
       where: {
@@ -126,6 +194,7 @@ export class UsersService {
       },
       select: {
         id: true,
+        email: true,
         name: true,
         phone: true,
         photo: true,

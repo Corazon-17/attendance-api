@@ -1,5 +1,9 @@
 import { CreateUserPositionDto } from '@app/shared/users/dto/user-position.dto';
-import { CreateUserDto, UpdateUserDto } from '@app/shared/users/dto/user.dto';
+import {
+  ChangePasswordDto,
+  CreateUserDto,
+  UpdateUserDto,
+} from '@app/shared/users/dto/user.dto';
 import {
   Body,
   Controller,
@@ -37,6 +41,16 @@ export class UsersController {
   @Post()
   createUser(@Body() dto: CreateUserDto) {
     return firstValueFrom(this.userClient.send({ cmd: 'create-user' }, dto));
+  }
+
+  @Patch('change-password/:id')
+  changePassword(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() dto: ChangePasswordDto,
+  ) {
+    return firstValueFrom(
+      this.userClient.send({ cmd: 'change-password' }, { id, ...dto }),
+    );
   }
 
   @Patch(':id')

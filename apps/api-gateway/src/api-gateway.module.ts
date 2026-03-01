@@ -10,7 +10,7 @@ import { AttendanceController } from './attendance/attendance.controller';
 import { AuthController } from './auth/auth.controller';
 import { JwtAuthGuard } from './auth/jwt/jwt.guard';
 import { JwtStrategy } from './auth/jwt/jwt.strategy';
-import { UsersController } from './users/user.controller';
+import { UsersController } from './user/user.controller';
 
 @Module({
   imports: [

@@ -26,7 +26,7 @@ async function main() {
       name: 'Admin HRD',
       email: 'admin@gmail.com',
       phone: '082656126835',
-      password: '$2a$10$OETRK7fV/Cg3nIsXONHGnO.g0eiKrHl9M0YdPp.jIfvgimRphUIse',
+      password: '$2b$10$X3bdFHkNMM4C4jP4aydCWeGlAOoMVc01t94iZYFbC9xD.wTLw7HiS',
       positionId: '5917613f-f6f3-4ff1-820d-8a8eb828701d',
     },
   });

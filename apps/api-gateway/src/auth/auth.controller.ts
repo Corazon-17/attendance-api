@@ -2,6 +2,8 @@ import { LoginDto } from '@app/shared/auth/dto/auth.dto';
 import {
   Body,
   Controller,
+  Get,
+  HttpCode,
   HttpStatus,
   Inject,
   Post,
@@ -20,6 +22,7 @@ export class AuthController {
   ) {}
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   @Public()
   async login(
     @Body() dto: LoginDto,
@@ -29,7 +32,7 @@ export class AuthController {
       this.authClient.send({ cmd: 'login' }, dto),
     );
 
-    res.cookie('refresh_token', jwt.refresh_token, {
+    res.cookie('refreshToken', jwt.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
       sameSite: 'lax',
@@ -37,14 +40,15 @@ export class AuthController {
     });
 
     return {
-      access_token: jwt.access_token,
+      accessToken: jwt.accessToken,
     };
   }
 
   @Post('refresh')
+  @HttpCode(HttpStatus.OK)
   @Public()
   async refresh(@Req() req: Request) {
-    const refreshToken = req.cookies['refresh_token'];
+    const refreshToken = req.cookies['refreshToken'];
 
     if (!refreshToken) {
       throw new RpcException({
@@ -58,12 +62,18 @@ export class AuthController {
   }
 
   @Post('logout')
-  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const user = req.user; // from JwtGuard
+  async logout(@Req() req, @Res({ passthrough: true }) res: Response) {
+    const userId = req.user.id;
 
     await firstValueFrom(this.authClient.send({ cmd: 'logout' }, {}));
-    res.clearCookie('refresh_token');
+    res.clearCookie('refreshToken');
 
     return { message: 'Logged out successfully' };
+  }
+
+  @Get('/me')
+  me(@Req() req) {
+    const user = req.user.id;
+    return firstValueFrom(this.authClient.send({ cmd: 'me' }, user?.id));
   }
 }

@@ -16,4 +16,9 @@ export class AuthServiceController {
   refreshToken(token: string) {
     return this.authServiceService.refreshToken(token);
   }
+
+  @MessagePattern({ cmd: 'me' })
+  me(userId: string) {
+    return this.authServiceService.me(userId);
+  }
 }

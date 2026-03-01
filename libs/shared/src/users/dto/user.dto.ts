@@ -34,15 +34,24 @@ export class CreateUserDto {
 
 export class UpdateUserDto {
   @IsString()
-  @MinLength(8)
-  password!: string;
-
-  @IsString()
-  @MinLength(10)
+  @IsOptional()
   phone: string | undefined;
 
   @IsUrl()
-  @MinLength(3)
   @IsOptional()
   photo: string | undefined;
+}
+
+export class ChangePasswordDto {
+  @IsString()
+  @MinLength(8)
+  currentPassword!: string;
+
+  @IsString()
+  @MinLength(8)
+  newPassword!: string;
+
+  @IsString()
+  @MinLength(8)
+  newPassword2!: string;
 }
