@@ -19,14 +19,13 @@ export class CreateUserDto {
   @MinLength(3)
   name!: string;
 
-  @IsString()
   @MinLength(10)
-  phone: string | undefined;
-
-  @IsUrl()
-  @MinLength(3)
   @IsOptional()
-  photo: string | undefined;
+  phone?: string;
+
+  @IsString()
+  @IsOptional()
+  photo?: string;
 
   @IsUUID()
   positionId!: string;
@@ -40,6 +39,25 @@ export class UpdateUserDto {
   @IsUrl()
   @IsOptional()
   photo: string | undefined;
+}
+
+export class updateUserForAdminDto {
+  @IsEmail()
+  email!: string;
+
+  @IsString()
+  @MinLength(3)
+  name!: string;
+
+  @MinLength(10)
+  @IsOptional()
+  phone?: string;
+
+  @IsOptional()
+  photo?: string;
+
+  @IsUUID()
+  positionId!: string;
 }
 
 export class ChangePasswordDto {

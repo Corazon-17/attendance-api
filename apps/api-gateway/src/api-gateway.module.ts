@@ -4,6 +4,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PassportModule } from '@nestjs/passport';
+import { AdminController } from './admin/admin.controller';
 import { ApiGatewayController } from './api-gateway.controller';
 import { ApiGatewayService } from './api-gateway.service';
 import { AttendanceController } from './attendance/attendance.controller';
@@ -58,6 +59,7 @@ import { UsersController } from './user/user.controller';
     UsersController,
     AuthController,
     AttendanceController,
+    AdminController,
   ],
   providers: [
     ApiGatewayService,

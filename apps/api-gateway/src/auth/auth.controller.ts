@@ -81,10 +81,12 @@ export class AuthController {
   }
 
   @Post('logout')
+  @HttpCode(HttpStatus.OK)
   async logout(@Req() req, @Res({ passthrough: true }) res: Response) {
     const userId = req.user.id;
 
-    await firstValueFrom(this.authClient.send({ cmd: 'logout' }, {}));
+    await firstValueFrom(this.authClient.send({ cmd: 'logout' }, userId));
+    res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
 
     return { message: 'Logged out successfully' };

@@ -3,11 +3,13 @@ import {
   ChangePasswordDto,
   CreateUserDto,
   UpdateUserDto,
+  updateUserForAdminDto,
 } from '@app/shared/users/dto/user.dto';
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { PasswordService } from 'libs/security/password.service';
 import { v7 } from 'uuid';
+import { Prisma } from '../generated/prisma/client';
 import { PrismaService } from './prisma/prisma.service';
 
 @Injectable()
@@ -66,20 +68,33 @@ export class UsersService {
   }
 
   async createUser(dto: CreateUserDto) {
-    const uuidv7 = v7();
-    const hashedPassword = await this.password.hash(dto.password);
+    try {
+      const uuidv7 = v7();
+      const hashedPassword = await this.password.hash(dto.password);
 
-    return this.prisma.user.create({
-      data: {
-        id: uuidv7,
-        email: dto.email,
-        password: hashedPassword,
-        name: dto.name,
-        phone: dto.phone,
-        photo: dto.photo,
-        positionId: dto.positionId,
-      },
-    });
+      return await this.prisma.user.create({
+        data: {
+          id: uuidv7,
+          email: dto.email,
+          password: hashedPassword,
+          name: dto.name,
+          phone: dto.phone,
+          photo: dto.photo,
+          positionId: dto.positionId,
+        },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new RpcException({
+            status: 'error',
+            message: 'Email already registered',
+            statusCode: 409,
+          });
+        }
+      }
+      throw new RpcException('Internal server error');
+    }
   }
 
   async updateUser(data: { id: string; actorId: string } & UpdateUserDto) {
@@ -97,6 +112,61 @@ export class UsersService {
     const updateData = {
       phone: data.phone,
       photo: data.photo,
+    };
+
+    const updated = await this.prisma.user.update({
+      where: {
+        id: data.id,
+      },
+      data: updateData,
+      omit: {
+        password: true,
+      },
+    });
+
+    const changes = this.buildChanges(current, updateData);
+
+    if (Object.keys(changes).length > 0) {
+      const uuidv7 = v7();
+      this.auditClient.emit('user.updated.log', {
+        id: uuidv7,
+        entity: 'user',
+        entityId: data.id,
+        action: 'UPDATE',
+        actorId: data.actorId,
+        changes: changes,
+      });
+
+      this.notificationClient.emit('user.updated.notify', {
+        id: data.id,
+        message: current.name + ' profile was updated',
+        changes: changes,
+      });
+    }
+
+    return updated;
+  }
+
+  async updateUserForAdmin(
+    data: { id: string; actorId: string } & updateUserForAdminDto,
+  ) {
+    const current = await this.prisma.user.findUnique({
+      where: { id: data.id },
+    });
+
+    if (!current) {
+      throw new RpcException({
+        statusCode: 404,
+        message: 'User not found',
+      });
+    }
+
+    const updateData = {
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      photo: data.photo,
+      positionId: data.positionId,
     };
 
     const updated = await this.prisma.user.update({
@@ -238,6 +308,7 @@ export class UsersService {
     return this.prisma.user.findMany({
       select: {
         id: true,
+        email: true,
         name: true,
         phone: true,
         photo: true,

@@ -92,6 +92,7 @@ export class AuthServiceService {
 
   async logout(userId: string) {
     await this.redisService.del(`refresh:${userId}`);
+    return null;
   }
 
   me(userId: string) {

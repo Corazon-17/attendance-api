@@ -3,6 +3,7 @@ import {
   ChangePasswordDto,
   CreateUserDto,
   UpdateUserDto,
+  updateUserForAdminDto,
 } from '@app/shared/users/dto/user.dto';
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
@@ -20,6 +21,13 @@ export class UserServiceController {
   @MessagePattern({ cmd: 'update-user' })
   updateUser(data: { id: string; actorId: string } & UpdateUserDto) {
     return this.userService.updateUser(data);
+  }
+
+  @MessagePattern({ cmd: 'update-user-for-admin' })
+  updateUserForAdmin(
+    data: { id: string; actorId: string } & updateUserForAdminDto,
+  ) {
+    return this.userService.updateUserForAdmin(data);
   }
 
   @MessagePattern({ cmd: 'change-password' })

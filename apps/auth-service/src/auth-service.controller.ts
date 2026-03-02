@@ -17,6 +17,11 @@ export class AuthServiceController {
     return this.authServiceService.refreshToken(token);
   }
 
+  @MessagePattern({ cmd: 'logout' })
+  logout(userId: string) {
+    return this.authServiceService.logout(userId);
+  }
+
   @MessagePattern({ cmd: 'me' })
   me(userId: string) {
     return this.authServiceService.me(userId);
