@@ -216,6 +216,36 @@ export class UsersService {
     });
   }
 
+  getUsers(ids: string[]) {
+    return this.prisma.user.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        phone: true,
+        photo: true,
+        position: true,
+      },
+    });
+  }
+
+  getAllUsers() {
+    return this.prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        phone: true,
+        photo: true,
+        position: true,
+      },
+    });
+  }
+
   getUserByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: {
@@ -225,18 +255,6 @@ export class UsersService {
         id: true,
         name: true,
         password: true,
-        position: true,
-      },
-    });
-  }
-
-  getUsers() {
-    return this.prisma.user.findMany({
-      select: {
-        id: true,
-        name: true,
-        phone: true,
-        photo: true,
         position: true,
       },
     });

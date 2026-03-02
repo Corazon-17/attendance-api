@@ -37,9 +37,14 @@ export class UserServiceController {
     return this.userService.getUserByEmail(data.email);
   }
 
+  @MessagePattern({ cmd: 'get-all-users' })
+  getAllUsers() {
+    return this.userService.getAllUsers();
+  }
+
   @MessagePattern({ cmd: 'get-users' })
-  getUsers() {
-    return this.userService.getUsers();
+  getUsers(ids: string[]) {
+    return this.userService.getUsers(ids);
   }
 
   @MessagePattern({ cmd: 'create-user-position' })

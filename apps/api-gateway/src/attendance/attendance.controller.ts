@@ -1,11 +1,12 @@
-import { ClockInDto } from '@app/shared/attendance/dto/attendance.dto';
+import { DateRangeDto, PaginationDto } from '@app/shared/shared.dto';
 import {
-  Body,
   Controller,
   Get,
   Inject,
   Param,
   Post,
+  Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -21,21 +22,36 @@ export class AttendanceController {
   ) {}
 
   @Post('clock-in')
-  clockIn(@Body() dto: ClockInDto) {
-    return firstValueFrom(this.attendanceClient.send({ cmd: 'clock-in' }, dto));
+  clockIn(@Req() req) {
+    const userId = req.user.id;
+
+    return firstValueFrom(
+      this.attendanceClient.send({ cmd: 'clock-in' }, { userId }),
+    );
   }
 
   @Post('clock-out')
-  clockOut(@Body() dto: ClockInDto) {
+  clockOut(@Req() req) {
+    const userId = req.user.id;
+
     return firstValueFrom(
-      this.attendanceClient.send({ cmd: 'clock-out' }, dto),
+      this.attendanceClient.send({ cmd: 'clock-out' }, { userId }),
+    );
+  }
+
+  @Get()
+  getAllAttendance(
+    @Query() query: { userId: string } & DateRangeDto & PaginationDto,
+  ) {
+    return firstValueFrom(
+      this.attendanceClient.send({ cmd: 'all-user-attendance' }, query),
     );
   }
 
   @Get(':userId')
-  getAttendance(@Param('userId') userId: string) {
+  getAttendance(@Param('userId') userId: string, @Query() query: DateRangeDto) {
     return firstValueFrom(
-      this.attendanceClient.send({ cmd: 'get-attendance' }, userId),
+      this.attendanceClient.send({ cmd: 'user-attendance' }, { userId, query }),
     );
   }
 }

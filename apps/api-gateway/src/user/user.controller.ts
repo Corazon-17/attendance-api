@@ -72,7 +72,7 @@ export class UsersController {
   }
 
   @Get()
-  getUsers() {
-    return firstValueFrom(this.userClient.send({ cmd: 'get-users' }, {}));
+  getAllUsers() {
+    return firstValueFrom(this.userClient.send({ cmd: 'get-all-users' }, {}));
   }
 }
